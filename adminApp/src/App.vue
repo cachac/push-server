@@ -3,7 +3,7 @@ import { ref, onMounted } from "vue";
 import { RouterLink, RouterView } from "vue-router";
 import HelloWorld from "./components/HelloWorld.vue";
 
-let swReg = ref(null);
+const swReg = ref(null);
 
 // window.addEventListener("load", function () {
 //   console.log("event listener push");
@@ -27,28 +27,65 @@ const allow = () => {
       })
       .then((sub) => {
         console.log("sub", sub);
+      })
+      .catch((e) => {
+        console.log("e", e);
       });
   });
 };
 
 const getPublicKey = () => {
   return fetch("http://localhost:3000/key")
-    .then((res) => {
-      console.log("res", res);
-      return res.arrayBuffer();
-    })
+    .then((res) => res.arrayBuffer())
     .then((key) => new Uint8Array(key));
 };
 
-onMounted(() => {
-  navigator.serviceWorker.register("/sw.js").then((reg) => {
-    console.log("reg", reg);
-    swReg.value = reg;
-    reg.pushManager.getSubscription().then((subs) => {
-      console.log("subs", subs);
-    }); // .then(verificaSuscripcion);
-  });
-});
+function urlB64ToUint8Array(base64String) {
+  const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+  const base64 = (base64String + padding)
+    .replace(/\-/g, "+")
+    .replace(/_/g, "/");
+
+  const rawData = window.atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+  return outputArray;
+}
+
+// onMounted(async () => {
+//   navigator.serviceWorker
+//     .register("./sw.js")
+//     .then((registration) => {
+//       swReg.value = registration;
+//       console.log("registrated", registration);
+
+//       const subscribeOptions = {
+//         userVisibleOnly: true,
+//         applicationServerKey: urlB64ToUint8Array(
+//           "BLVMazKECWEPNJbqCsfa-Y-SUV28E5s80bLaCKOsro5dITdM2ZWtNigTR1DZIM1niiglOPHF3bGZjXpYYO4gQpa"
+//         ),
+//       };
+
+//       return registration.pushManager.subscribe(subscribeOptions);
+//     })
+//     .then(function (pushSubscription) {
+//       console.log("PushSubscription: ", JSON.stringify(pushSubscription));
+//       //post to our subscriptions service
+//       //http://localhost:3030/subscriptions
+//       return pushSubscription;
+//     });
+
+//   //
+
+//   //   // swReg.value = reg;
+//   //   // reg.pushManager.getSubscription().then((subs) => {
+//   //   //   console.log("subs", subs);
+//   //   // }); // .then(verificaSuscripcion);
+//   // });
+// });
 </script>
 
 <template>

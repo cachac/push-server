@@ -8,6 +8,8 @@ export const GET_KEY = (c, next) => {
     console.log('get key')
     const url = urlsafeBase64.decode(vapid.publicKey)
 
+    console.log('vapid.publicKey', vapid.publicKey)
+
     return c.text(url)
 }
 
