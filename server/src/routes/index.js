@@ -14,12 +14,12 @@ router.get("/healthcheck", (c) =>
   c.json({ app: config.APP_NAME, version: config.APP_VERSION })
 );
 router.get("/key", (c, next) => GET_KEY(c, next));
-router.get("/*", (c) => {
-  c.status(404);
-  return c.text("Not Found");
-});
+// router.get("/*", (c) => {
+//   c.status(404);
+//   return c.text("Not Found");
+// });
 router.post("/subscribe", (c, next) => SUBSCRIBE(c, next));
-router.post("/*", (c) => {
-  c.status(404);
-  return c.text("Not Found");
-});
+// router.post("/*", (c) => {
+//   c.status(404);
+//   return c.text("Not Found");
+// });

@@ -31,7 +31,7 @@ export default {
 
           registration.pushManager.getSubscription().then((subscription) => {
             if (subscription) {
-              console.log("User is subscribed.", subscription);
+              console.log("User is subscribed.");
             } else {
               console.log("User is not subscribed.");
             }
