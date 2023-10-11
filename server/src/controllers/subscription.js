@@ -2,7 +2,7 @@ import webpush from "web-push";
 import urlsafeBase64 from "urlsafe-base64";
 import vapid from "../../vapid.json";
 
-const subscriptions = [];
+let subscriptions = [];
 
 export const GET_KEY = (c, next) => {
   try {
@@ -25,6 +25,30 @@ export const SUBSCRIBE = async (c, next) => {
 
     // TODO: GUARDAR EN BD
     subscriptions.push(subscription);
+
+    console.log("subscription array", subscriptions.length);
+
+    return c.json({ ok: true });
+  } catch (error) {
+    c.error = {
+      status: 500,
+      code: 2001,
+      message: `Subscription Error`,
+      userMessage: `Internal Server Error...`,
+    };
+    return next();
+  }
+};
+
+export const UNSUBSCRIBE = async (c, next) => {
+  try {
+    console.log("un subscription");
+    const subscription = await c.req.json();
+
+    // TODO: BUSCAR Y ELIMINAR DE BD
+    subscriptions = subscriptions.filter(
+      (e) => e.endpoint !== subscription.endpoint
+    );
 
     console.log("subscription array", subscriptions.length);
 

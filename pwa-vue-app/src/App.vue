@@ -1,20 +1,41 @@
 <template>
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js App" />
+    <!-- <HelloWorld msg="Welcome to Your Vue.js App" /> -->
+    noti: {{ userNotifications }}** permission: {{ permission }} //
+    <p v-if="this.permission === 'denied'">"Notificaciones Denegadas"</p>
+    <button v-else @click="subscribe">
+      {{ userSubscriptionStatus }}
+    </button>
   </div>
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld.vue";
+// import HelloWorld from "./components/HelloWorld.vue";
 
 export default {
   name: "App",
   components: {
-    HelloWorld,
+    // HelloWorld,
+  },
+  data() {
+    return {
+      userNotifications: false,
+      permission: null, // 'granted', 'denied', or 'default':
+      registration: null,
+    };
+  },
+  computed: {
+    userSubscriptionStatus() {
+      return this.userNotifications
+        ? "Desactivar Notificaciones"
+        : "Activar Notificaciones";
+    },
   },
   mounted() {
     console.log("mounted");
+
+    this.permission = Notification.permission;
 
     if ("serviceWorker" in navigator) {
       console.log("service worker is supported");
@@ -28,38 +49,16 @@ export default {
         })
         .then((registration) => {
           console.log("Service worker registered");
+          this.registration = registration;
 
           registration.pushManager.getSubscription().then((subscription) => {
             if (subscription) {
               console.log("User is subscribed.");
+              this.userNotifications = true;
             } else {
               console.log("User is not subscribed.");
+              this.userNotifications = false;
             }
-          });
-
-          this.getPublicKey().then((key) => {
-            registration.pushManager
-              .subscribe({
-                userVisibleOnly: true,
-                applicationServerKey: key,
-              })
-              .then((res) => res.toJSON())
-              .then((suscripcion) => {
-                console.log("User subscribed");
-
-                fetch("http://localhost:3000/subscribe", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify(suscripcion),
-                })
-                  .then((resSubscribe) => {
-                    console.log("Response subscribe:", resSubscribe.ok);
-                  })
-                  .catch(() => {});
-              })
-              .catch((error) => {
-                console.log("Service worker subscription failed:", error);
-              });
           });
         });
     }
@@ -69,6 +68,63 @@ export default {
       return fetch("http://localhost:3000/key")
         .then((res) => res.arrayBuffer())
         .then((key) => new Uint8Array(key));
+    },
+    unSubscribe() {
+      this.registration.pushManager.getSubscription().then((subs) => {
+        if (subs)
+          subs
+            .unsubscribe()
+            .then(() => {
+              console.log("User unsubscribed");
+              this.userNotifications = false;
+
+              fetch("http://localhost:3000/unsubscribe", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(subs),
+              })
+                .then((resUnsubscribe) => {
+                  console.log("Response unsubscribe:", resUnsubscribe.ok);
+                })
+                .catch(() => {});
+            })
+            .catch(() => {
+              console.log("Unsubscribe failed");
+            });
+      });
+    },
+    subscribe() {
+      if (this.userNotifications) return this.unSubscribe();
+
+      this.getPublicKey().then((key) => {
+        this.registration.pushManager
+          .subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: key,
+          })
+          .then((res) => res.toJSON())
+          .then((suscripcion) => {
+            console.log("User subscribed");
+            this.userNotifications = true;
+
+            fetch("http://localhost:3000/subscribe", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(suscripcion),
+            })
+              .then((resSubscribe) => {
+                console.log("Response subscribe:", resSubscribe.ok);
+              })
+              .catch(() => {});
+          })
+          .finally(() => {
+            this.permission = Notification.permission;
+          })
+          .catch((error) => {
+            console.log("Service worker subscription failed:", error);
+            this.userNotifications = false;
+          });
+      });
     },
   },
 };
