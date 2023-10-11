@@ -25,9 +25,10 @@ self.addEventListener("activate", (event) => {
 //Web Push Notifications//
 let click_open_url;
 self.addEventListener("push", function (event) {
-  const push_message = JSON.parse(event.data.text());
+  // const push_message = JSON.parse(event.data.text());
+  const push_message = event.data.json();
   console.log("push_message", push_message);
-  // push notification can send event.data.json() as well
+
   click_open_url = push_message.url;
   const options = {
     body: push_message.body,

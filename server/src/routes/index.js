@@ -1,7 +1,12 @@
 import { Hono } from "hono";
 import { jwt } from "hono/jwt";
 import config from "../config";
-import { GET_KEY, SUBSCRIBE, UNSUBSCRIBE } from "../controllers/subscription";
+import {
+  GET_KEY,
+  SUBSCRIBE,
+  UNSUBSCRIBE,
+  PUSH,
+} from "../controllers/subscription";
 // import {} from "../controllers/subscription"
 
 export const router = new Hono();
@@ -20,6 +25,7 @@ router.get("/key", (c, next) => GET_KEY(c, next));
 // });
 router.post("/subscribe", (c, next) => SUBSCRIBE(c, next));
 router.post("/unsubscribe", (c, next) => UNSUBSCRIBE(c, next));
+router.post("/push", (c, next) => PUSH(c, next));
 // router.post("/*", (c) => {
 //   c.status(404);
 //   return c.text("Not Found");

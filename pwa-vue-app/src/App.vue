@@ -7,6 +7,11 @@
     <button v-else @click="subscribe">
       {{ userSubscriptionStatus }}
     </button>
+
+    <br />
+    <br />
+    <br />
+    <button @click="push">PUSH</button>
   </div>
 </template>
 
@@ -70,9 +75,9 @@ export default {
         .then((key) => new Uint8Array(key));
     },
     unSubscribe() {
-      this.registration.pushManager.getSubscription().then((subs) => {
-        if (subs)
-          subs
+      this.registration.pushManager.getSubscription().then((subscription) => {
+        if (subscription)
+          subscription
             .unsubscribe()
             .then(() => {
               console.log("User unsubscribed");
@@ -81,7 +86,10 @@ export default {
               fetch("http://localhost:3000/unsubscribe", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(subs),
+                body: JSON.stringify({
+                  clientid: "123",
+                  subscription,
+                }),
               })
                 .then((resUnsubscribe) => {
                   console.log("Response unsubscribe:", resUnsubscribe.ok);
@@ -103,14 +111,17 @@ export default {
             applicationServerKey: key,
           })
           .then((res) => res.toJSON())
-          .then((suscripcion) => {
+          .then((subscription) => {
             console.log("User subscribed");
             this.userNotifications = true;
 
             fetch("http://localhost:3000/subscribe", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(suscripcion),
+              body: JSON.stringify({
+                clientid: "123",
+                subscription,
+              }),
             })
               .then((resSubscribe) => {
                 console.log("Response subscribe:", resSubscribe.ok);
@@ -125,6 +136,25 @@ export default {
             this.userNotifications = false;
           });
       });
+    },
+    push() {
+      fetch("http://localhost:3000/push", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          clientid: "123",
+          message: {
+            title: "Hello World",
+            body: "Random message" + Math.random(),
+            url: "https://storylabs.dev",
+          },
+        }),
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          console.log("Response push:", res);
+        })
+        .catch(() => {});
     },
   },
 };

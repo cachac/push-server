@@ -4,6 +4,12 @@ import vapid from "../../vapid.json";
 
 let subscriptions = [];
 
+webpush.setVapidDetails(
+  "mailto:info@storylabs.dev",
+  vapid.publicKey,
+  vapid.privateKey
+);
+
 export const GET_KEY = (c, next) => {
   try {
     return c.text(urlsafeBase64.decode(vapid.publicKey));
@@ -47,7 +53,7 @@ export const UNSUBSCRIBE = async (c, next) => {
 
     // TODO: BUSCAR Y ELIMINAR DE BD
     subscriptions = subscriptions.filter(
-      (e) => e.endpoint !== subscription.endpoint
+      (e) => e.clientid !== subscription.clientid
     );
 
     console.log("subscription array", subscriptions.length);
@@ -65,34 +71,52 @@ export const UNSUBSCRIBE = async (c, next) => {
 };
 
 export const PUSH = async (c, next) => {
-  // clientid: 123, message: xyz
-
   const { clientid, message } = await c.req.json();
   console.log("message", message);
+  console.log("clientid", clientid);
 
-  const sentNotifications = [];
+  const clients = subscriptions.filter((e) => e.clientid === clientid);
+  if (!clients.length) {
+    return c.json({
+      ok: false,
+      msg: "invalid clientid",
+    });
+  }
 
-  // TODO: enviar solo al cliente correspondiente.
-  const client = subscriptions.filter();
-
-  const resultNotifications = client.map((subscription) => {
-    console.log("subscription", subscription);
-    const pushProm = webpush
+  const resultNotifications = clients.map(({ clientid, subscription }) => {
+    return webpush
       .sendNotification(subscription, JSON.stringify(message))
-      .then(console.log("Notificacion enviada "))
+      .then((res) => {
+        console.log("Notificacion enviada ", res);
+
+        return {
+          clientid,
+          ok: true,
+        };
+      })
       .catch((err) => {
-        console.error("Notificación falló");
+        console.error("Notificación falló", err);
 
-        if (err.statusCode === 410) return {};
+        return {
+          clientid,
+          ok: false,
+          subscription,
+          delete: err.statusCode === 410,
+        };
       });
-
-    return {};
   });
 
-  // TODO: eliminar suscripciones con error.
-  await Promise.all(resultNotifications).then((res) => {
-    console.log("resultNotifications", res);
-  });
+  // TODO: eliminar suscripciones sin cliente (410).
+  return Promise.all(resultNotifications).then((res) => {
+    res.forEach((e) => {
+      if (e.delete) {
+        subscriptions = subscriptions.filter(
+          (sub) => sub.subscription.endpoint !== e.subscription.endpoint
+        );
+      }
+    });
 
-  return c.json({ ok: true });
+    console.log("subscriptions.length", subscriptions.length);
+    return c.json({ res });
+  });
 };
