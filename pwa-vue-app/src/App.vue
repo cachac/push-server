@@ -15,17 +15,62 @@ export default {
   },
   mounted() {
     console.log("mounted");
-    // this.getPublicKey().then((key) => {
-    //   console.log(key);
-    // });
+
+    if ("serviceWorker" in navigator) {
+      console.log("service worker is supported");
+
+      navigator.serviceWorker
+        .register("/service-worker.js", {
+          scope: "/",
+          updateViaCache: "all",
+          cacheName: "bali-pwa-cache",
+          manifest: { url: "/manifest.json" },
+        })
+        .then((registration) => {
+          console.log("Service worker registered");
+
+          registration.pushManager.getSubscription().then((subscription) => {
+            if (subscription) {
+              console.log("User is subscribed.", subscription);
+            } else {
+              console.log("User is not subscribed.");
+            }
+          });
+
+          this.getPublicKey().then((key) => {
+            registration.pushManager
+              .subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: key,
+              })
+              .then((res) => res.toJSON())
+              .then((suscripcion) => {
+                console.log("User subscribed");
+
+                fetch("http://localhost:3000/subscribe", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify(suscripcion),
+                })
+                  .then((resSubscribe) => {
+                    console.log("Response subscribe:", resSubscribe.ok);
+                  })
+                  .catch(() => {});
+              })
+              .catch((error) => {
+                console.log("Service worker subscription failed:", error);
+              });
+          });
+        });
+    }
   },
-  // methods: {
-  //   getPublicKey() {
-  //     return fetch("http://localhost:3000/key")
-  //       .then((res) => res.arrayBuffer())
-  //       .then((key) => new Uint8Array(key));
-  //   },
-  // },
+  methods: {
+    getPublicKey() {
+      return fetch("http://localhost:3000/key")
+        .then((res) => res.arrayBuffer())
+        .then((key) => new Uint8Array(key));
+    },
+  },
 };
 </script>
 

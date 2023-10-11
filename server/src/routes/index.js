@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { jwt } from "hono/jwt";
 import config from "../config";
-import { GET_KEY, SUBSCRIBE } from "../controllers/push";
+import { GET_KEY, SUBSCRIBE } from "../controllers/subscription";
 // import {} from "../controllers/subscription"
 
 export const router = new Hono();

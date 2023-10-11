@@ -5,6 +5,8 @@ module.exports = defineConfig({
     workboxPluginMode: "InjectManifest",
     workboxOptions: {
       swSrc: "/src/service-worker.js",
+      skipWaiting: true, // To ensure the new service worker is activated immediately
+      clientsClaim: true, // To take control of open tabs without a hard refresh
     },
   },
 });
