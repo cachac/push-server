@@ -138,6 +138,9 @@ export default {
       });
     },
     push() {
+      const body = "Random message" + Math.random();
+      console.log("sending", body);
+
       fetch("http://localhost:3000/push", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -145,7 +148,7 @@ export default {
           clientid: "123",
           message: {
             title: "Hello World",
-            body: "Random message" + Math.random(),
+            body,
             url: "https://storylabs.dev",
           },
         }),
