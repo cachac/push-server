@@ -74,6 +74,25 @@ export default {
         .then((res) => res.arrayBuffer())
         .then((key) => new Uint8Array(key));
     },
+    urlB64ToUint8Array(base64String) {
+      console.log(base64String);
+      const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+      const base64 = (base64String + padding)
+        // eslint-disable-next-line no-useless-escape
+        .replace(/\-/g, "+")
+        .replace(/_/g, "/");
+
+      const rawData = window.atob(base64);
+      const outputArray = new Uint8Array(rawData.length);
+
+      for (let i = 0; i < rawData.length; ++i) {
+        outputArray[i] = rawData.charCodeAt(i);
+      }
+
+      console.log(outputArray);
+
+      return outputArray;
+    },
     unSubscribe() {
       this.registration.pushManager.getSubscription().then((subscription) => {
         if (subscription)
@@ -104,11 +123,14 @@ export default {
     subscribe() {
       if (this.userNotifications) return this.unSubscribe();
 
+      // eslint-disable-next-line no-unused-vars
       this.getPublicKey().then((key) => {
         this.registration.pushManager
           .subscribe({
             userVisibleOnly: true,
-            applicationServerKey: key,
+            applicationServerKey: this.urlB64ToUint8Array(
+              "BLVMazKECWEPNJbqCsfa-Y-SUV28E5s80bLaCKOsro5dITdM2ZWtNigTR1DZIM1niiglOPHF3bGZjXpYYO4gQpQ"
+            ),
           })
           .then((res) => res.toJSON())
           .then((subscription) => {
@@ -138,7 +160,7 @@ export default {
       });
     },
     push() {
-      const body = "Random message" + Math.random();
+      const body = "Random message";
       console.log("sending", body);
 
       fetch("http://localhost:3000/push", {

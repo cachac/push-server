@@ -1,12 +1,12 @@
 import { Hono } from "hono";
 import { jwt } from "hono/jwt";
-import config from "../config";
+import config from "../config/index.js";
 import {
   GET_KEY,
   SUBSCRIBE,
   UNSUBSCRIBE,
   PUSH,
-} from "../controllers/subscription";
+} from "../controllers/subscription.js";
 // import {} from "../controllers/subscription"
 
 export const router = new Hono();

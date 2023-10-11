@@ -1,18 +1,31 @@
 import webpush from "web-push";
 import urlsafeBase64 from "urlsafe-base64";
-import vapid from "../../vapid.json";
+// import vapid from "../../vapid.json";
 
 let subscriptions = [];
 
+// if (!vapid?.publicKey) {
+//   const vapidKeys = webpush.generateVAPIDKeys();
+//   console.log("vapidKeys", vapidKeys);
+//   webpush.setGCMAPIKey("<Your GCM API Key Here>");
+// }
+
 webpush.setVapidDetails(
   "mailto:info@storylabs.dev",
-  vapid.publicKey,
-  vapid.privateKey
+
+  "BLVMazKECWEPNJbqCsfa-Y-SUV28E5s80bLaCKOsro5dITdM2ZWtNigTR1DZIM1niiglOPHF3bGZjXpYYO4gQpQ",
+  "x5sv6IZ4XWkWjBIC_tPstpDT_EtKrrPhFYxYSrdzJT0"
+  // vapid.publicKey,
+  // vapid.privateKey
 );
 
 export const GET_KEY = (c, next) => {
   try {
-    return c.text(urlsafeBase64.decode(vapid.publicKey));
+    return c.text(
+      urlsafeBase64.decode(
+        "BLVMazKECWEPNJbqCsfa-Y-SUV28E5s80bLaCKOsro5dITdM2ZWtNigTR1DZIM1niiglOPHF3bGZjXpYYO4gQpQ"
+      )
+    );
   } catch (error) {
     c.error = {
       status: 500,
@@ -28,6 +41,8 @@ export const SUBSCRIBE = async (c, next) => {
   try {
     console.log("subscription");
     const subscription = await c.req.json();
+
+    console.log("subscription", subscription);
 
     // TODO: GUARDAR EN BD
     subscriptions.push(subscription);
@@ -84,10 +99,11 @@ export const PUSH = async (c, next) => {
   }
 
   const resultNotifications = clients.map(({ clientid, subscription }) => {
+    console.log("subscription", subscription);
     return webpush
       .sendNotification(subscription, JSON.stringify(message))
       .then((res) => {
-        console.log("Notificacion enviada ", res);
+        console.log("Notificacion enviada ", res.statusCode);
 
         return {
           clientid,

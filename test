@@ -1,0 +1,42 @@
+  web-push send-notification  \
+  --endpoint=https://fcm.googleapis.com/fcm/send/eMhFTmuXY44:APA91bEZMYN0u671sWGZdhI-pvUKgocGUJOdv59W0OkBudrbU0wBf6zPnDq5WGE4Fuu948Cj5g2wm_UCtV1hxNNQ1m5oIT6Ekpw-BHydjOIcqCUaQoWHbc7aohEZgDvC5dnzr2B-91xG \
+  --key=BL5RFGF-iXl18diXbGlr_nDnjgNt4YANFh1WgHq8kvFUVPXD2t6PhBpaWDojFmfTQ-odglNiBmKzXgGC3FqM9Xw \
+  --auth=bYZbQ3f0ZWSsxR3H6xvtIQ \
+  --vapid-subject=mailto:example@qq.com \
+  --vapid-pubkey=BLVMazKECWEPNJbqCsfa-Y-SUV28E5s80bLaCKOsro5dITdM2ZWtNigTR1DZIM1niiglOPHF3bGZjXpYYO4gQpQ  \
+  --vapid-pvtkey=x5sv6IZ4XWkWjBIC_tPstpDT_EtKrrPhFYxYSrdzJT0 \
+  --payload='{ "title": "abc", "url": "https://storylabs.dev", "body": "mensaje" }'
+
+
+
+ endpoint: "",
+  expirationTime: null,
+  keys: {
+    p256dh: "",
+    auth: ""
+  }
+
+
+subscription {
+  clientid: "123",
+  subscription: {
+    endpoint: "https://fcm.googleapis.com/fcm/send/fNM2ktlwmPk:APA91bFY43HC_E5m9PU7Gnih9eIjF4CXfgsvvMvMxUtMh6As8MofMoEcpHXZhqPNHjgYW10LA-zqOGCsNPqoWOlAnqar31BHaOlx8Z9pW-ziamq7FqcUqHWJxV1W0ZWJfyjeUs6AQDKE",
+    expirationTime: null,
+    keys: {
+      p256dh: "BHmYuMipm7n2o8XaB0zo2525kw0NWd3z5JWHldojKIscKWxMMrhJqT0suVu-lFAjfqzvlIJfBn_Q8xjnJuW1l7A",
+      auth: "ppeTuRPXva81Vw7NjoeBkA"
+    }
+  }
+}
+
+subscription {
+  endpoint: "",
+  expirationTime: null,
+  keys: {
+    p256dh: "",
+    auth: ""
+  }
+}
+
+
+
