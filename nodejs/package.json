@@ -1,12 +1,12 @@
 {
-  "name": "nodejslabs",
+  "name": "nodejspush",
   "version": "1.0.0",
   "description": "Node JS backend",
   "main": "main.js",
   "type": "module",
   "scripts": {
-    "dev1": "nodemon --delay 1 src/main.js --ext js",
-    "dev": "bun --hot run src/main.js"
+    "dev": "nodemon --delay 1 src/main.js --ext js",
+    "devbun": "bun --hot run src/main.js"
   },
   "repository": {
     "type": "git",

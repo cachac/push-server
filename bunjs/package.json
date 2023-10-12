@@ -7,7 +7,6 @@
   "scripts": {
     "start": "bun run src/main.js",
     "dev": "bun --hot run src/main.js",
-    "devnode": "nodemon --delay 1 src/main.js --ext js",
     "generate-vapid": "./node_modules/web-push/src/cli.js generate-vapid-keys --json > vapid.json"
   },
   "author": "Carlos Chacon, Victor Rodriguez",
