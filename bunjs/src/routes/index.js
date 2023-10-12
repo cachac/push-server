@@ -7,7 +7,6 @@ import {
   UNSUBSCRIBE,
   PUSH,
 } from "../controllers/subscription.js";
-// import {} from "../controllers/subscription"
 
 export const router = new Hono();
 

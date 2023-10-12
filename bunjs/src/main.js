@@ -9,7 +9,7 @@ app.use("*", cors());
 app.route("/", router);
 app.use("*", (c, next) => errorHandlers(c, next));
 app.onError((err, c) => {
-  console.error("Global Aplication Error :>> ", err);
+  console.error("Global Application Error :>> ", err);
   return c.text("App Error Message", 500);
 });
 

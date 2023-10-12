@@ -4,12 +4,6 @@ import urlsafeBase64 from "urlsafe-base64";
 
 let subscriptions = [];
 
-// if (!vapid?.publicKey) {
-//   const vapidKeys = webpush.generateVAPIDKeys();
-//   console.log("vapidKeys", vapidKeys);
-//   webpush.setGCMAPIKey("<Your GCM API Key Here>");
-// }
-
 webpush.setVapidDetails(
   "mailto:info@storylabs.dev",
 
@@ -44,10 +38,8 @@ export const SUBSCRIBE = async (c, next) => {
 
     console.log("subscription", subscription);
 
-    // TODO: GUARDAR EN BD
+    // TODO: save to DB
     subscriptions.push(subscription);
-
-    console.log("subscription array", subscriptions.length);
 
     return c.json({ ok: true });
   } catch (error) {
@@ -63,15 +55,13 @@ export const SUBSCRIBE = async (c, next) => {
 
 export const UNSUBSCRIBE = async (c, next) => {
   try {
-    console.log("un subscription");
+    console.log("un-subscribe");
     const subscription = await c.req.json();
 
-    // TODO: BUSCAR Y ELIMINAR DE BD
+    // TODO: delete BD
     subscriptions = subscriptions.filter(
       (e) => e.clientid !== subscription.clientid
     );
-
-    console.log("subscription array", subscriptions.length);
 
     return c.json({ ok: true });
   } catch (error) {
@@ -103,7 +93,7 @@ export const PUSH = async (c, next) => {
     return webpush
       .sendNotification(subscription, JSON.stringify(message))
       .then((res) => {
-        console.log("Notificacion enviada ", res.statusCode);
+        console.log("Notification sent ", res.statusCode);
 
         return {
           clientid,
@@ -111,7 +101,7 @@ export const PUSH = async (c, next) => {
         };
       })
       .catch((err) => {
-        console.error("Notificación falló", err);
+        console.error("Notification fails", err);
 
         return {
           clientid,
@@ -122,7 +112,7 @@ export const PUSH = async (c, next) => {
       });
   });
 
-  // TODO: eliminar suscripciones sin cliente (410).
+  // TODO: delete subscription if statusCode === (410).
   return Promise.all(resultNotifications).then((res) => {
     res.forEach((e) => {
       if (e.delete) {
@@ -132,7 +122,6 @@ export const PUSH = async (c, next) => {
       }
     });
 
-    console.log("subscriptions.length", subscriptions.length);
     return c.json({ res });
   });
 };
