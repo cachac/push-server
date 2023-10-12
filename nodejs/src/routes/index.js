@@ -1,5 +1,5 @@
 import express from "express";
-import { sticky } from "../util/sticky.js";
+// import { sticky } from "../util/sticky.js";
 import * as subs from "../controllers/subscription.js";
 
 const router = express.Router();

@@ -32,15 +32,10 @@ export const GET_KEY = async (req, res, next) => {
 
 export const SUBSCRIBE = async (req, res, next) => {
   try {
-    console.log("subscription");
     const subscription = await req.body;
 
-    console.log("subscription", subscription);
-
-    // TODO: GUARDAR EN BD
+    // TODO: BD
     subscriptions.push(subscription);
-
-    console.log("subscription array", subscriptions.length);
 
     res.send({ ok: true });
   } catch (error) {
@@ -55,15 +50,12 @@ export const SUBSCRIBE = async (req, res, next) => {
 
 export const UNSUBSCRIBE = async (req, res, next) => {
   try {
-    console.log("un subscription");
     const subscription = await req.body;
 
-    // TODO: BUSCAR Y ELIMINAR DE BD
+    // TODO: delete  BD
     subscriptions = subscriptions.filter(
       (e) => e.clientid !== subscription.clientid
     );
-
-    console.log("subscription array", subscriptions.length);
 
     return res.send({ ok: true });
   } catch (error) {
@@ -91,11 +83,10 @@ export const PUSH = async (req, res, next) => {
     }
 
     const resultNotifications = clients.map(({ clientid, subscription }) => {
-      console.log("subscription", subscription);
       return webpush
         .sendNotification(subscription, JSON.stringify(message))
         .then((res) => {
-          console.log("Notificacion enviada ", res.statusCode);
+          console.log("Notification sent ", res.statusCode);
 
           return {
             clientid,
@@ -103,7 +94,7 @@ export const PUSH = async (req, res, next) => {
           };
         })
         .catch((err) => {
-          console.error("Notificación falló", err);
+          console.error("Notification Error", err);
 
           return {
             clientid,
@@ -114,7 +105,7 @@ export const PUSH = async (req, res, next) => {
         });
     });
 
-    // TODO: eliminar suscripciones sin cliente (410).
+    // TODO: delete BD (410).
     return Promise.all(resultNotifications).then((response) => {
       response.forEach((e) => {
         if (e.delete) {
@@ -124,7 +115,6 @@ export const PUSH = async (req, res, next) => {
         }
       });
 
-      console.log("subscriptions.length", subscriptions.length);
       return res.send({ response });
     });
   } catch (error) {
