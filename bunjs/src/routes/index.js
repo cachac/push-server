@@ -17,7 +17,7 @@ const secret = config.TOKEN_SECRET;
 router.get("/healthcheck", (c) =>
   c.json({ app: config.APP_NAME, version: config.APP_VERSION })
 );
-router.get("/key", (c, next) => GET_KEY(c, next));
+router.get("/getPublicKey", (c, next) => GET_KEY(c, next));
 // router.get("/*", (c) => {
 //   c.status(404);
 //   return c.text("Not Found");

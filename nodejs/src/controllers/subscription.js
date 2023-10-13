@@ -1,6 +1,7 @@
 import webpush from "web-push";
 import urlsafeBase64 from "urlsafe-base64";
-// import vapid from "../../vapid.json"; assert { type: 'json' };
+// import vapid from "../../vapid.json"; assert { type: "json" };
+import fs from "fs";
 
 let subscriptions = [];
 

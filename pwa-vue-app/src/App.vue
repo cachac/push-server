@@ -70,7 +70,7 @@ export default {
   },
   methods: {
     getPublicKey() {
-      return fetch("http://localhost:3000/key")
+      return fetch("http://localhost:3093/key")
         .then((res) => res.arrayBuffer())
         .then((key) => new Uint8Array(key));
     },
@@ -102,7 +102,7 @@ export default {
               console.log("User unsubscribed");
               this.userNotifications = false;
 
-              fetch("http://localhost:3000/unsubscribe", {
+              fetch("http://localhost:3093/unsubscribe", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -137,7 +137,7 @@ export default {
             console.log("User subscribed");
             this.userNotifications = true;
 
-            fetch("http://localhost:3000/subscribe", {
+            fetch("http://localhost:3093/subscribe", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
@@ -163,15 +163,15 @@ export default {
       const body = "Random message";
       console.log("sending", body);
 
-      fetch("http://localhost:3000/push", {
+      fetch("http://localhost:3093/push", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          clientid: "123",
+          clientid: "64a1d8f79ceec3a6daaa207e", // emisor
           message: {
             title: "Hello World",
             body,
-            url: "https://storylabs.dev",
+            url: "http://localhost:8080/produccion/ordenes",
           },
         }),
       })

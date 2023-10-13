@@ -26,6 +26,6 @@ process.on("unhandledRejection", (err) => {
   process.exit(1);
 });
 
-app.listen(3001, () => {
+app.listen(config.NODE_PORT, () => {
   console.log(`Listening to port ${config.NODE_PORT} - Express JS | REST API`);
 });

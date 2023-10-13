@@ -12,7 +12,7 @@ router.get("/healthcheck", (_, res) => {
 });
 
 // POST CRUD
-router.get("/key", subs.GET_KEY);
+router.get("/getpublickey", subs.GET_KEY);
 router.post("/subscribe", subs.SUBSCRIBE);
 router.post("/unsubscribe", subs.UNSUBSCRIBE);
 router.post("/push", subs.PUSH);

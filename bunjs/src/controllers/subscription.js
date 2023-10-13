@@ -15,6 +15,7 @@ webpush.setVapidDetails(
 
 export const GET_KEY = (c, next) => {
   try {
+    console.log('get key');
     return c.text(
       urlsafeBase64.decode(
         "BLVMazKECWEPNJbqCsfa-Y-SUV28E5s80bLaCKOsro5dITdM2ZWtNigTR1DZIM1niiglOPHF3bGZjXpYYO4gQpQ"
